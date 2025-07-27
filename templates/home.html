@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Vehicle Service Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Find Reliable Vehicle Services Near You</h1>
+                <p class="lead mb-4">Connect with trusted mechanics, fuel delivery, towing services, and more. Get your vehicle serviced quickly and professionally.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'services:list' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-search me-2"></i>Find Services
+                        </a>
+                        <a href="{% url 'bookings:create' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-plus me-2"></i>Book Service
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a href="{% url 'accounts:provider_register' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-briefcase me-2"></i>Join as Provider
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <img src="https://images.pexels.com/photos/3807142/pexels-photo-3807142.jpeg?auto=compress&cs=tinysrgb&w=600" 
+                         alt="Vehicle Service" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Why Choose ServiceHub?</h2>
+                <p class="lead text-muted">We connect you with verified, professional service providers for all your vehicle needs.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-box bg-white">
+                    <div class="icon-box mb-3">
+                        <i class="fas fa-map-marker-alt fa-3x text-primary"></i>
+                    </div>
+                    <h4>Location-Based Matching</h4>
+                    <p class="text-muted">Find the nearest service providers based on your current location. Quick and convenient service at your doorstep.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-box bg-white">
+                    <div class="icon-box mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-success"></i>
+                    </div>
+                    <h4>Verified Providers</h4>
+                    <p class="text-muted">All service providers are thoroughly vetted and verified. Trust in quality and professional service every time.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-box bg-white">
+                    <div class="icon-box mb-3">
+                        <i class="fas fa-star fa-3x text-warning"></i>
+                    </div>
+                    <h4>Rating & Reviews</h4>
+                    <p class="text-muted">Read genuine reviews and ratings from other customers to make informed decisions about your service provider.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Our Services</h2>
+                <p class="lead text-muted">From routine maintenance to emergency assistance, we've got you covered.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fas fa-wrench fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Mechanical Services</h5>
+                        <p class="card-text">Expert mechanics for repairs, maintenance, and inspections.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fas fa-gas-pump fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Fuel Delivery</h5>
+                        <p class="card-text">Emergency fuel delivery service right to your location.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fas fa-truck fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Towing Services</h5>
+                        <p class="card-text">24/7 towing and roadside assistance when you need it most.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fas fa-car fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Car Wash</h5>
+                        <p class="card-text">Professional car washing and detailing services.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold mb-3">Ready to Get Started?</h2>
+                <p class="lead mb-0">Join thousands of satisfied customers who trust ServiceHub for their vehicle service needs.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up Now
+                    </a>
+                {% else %}
+                    <a href="{% url 'services:list' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-search me-2"></i>Find Services
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="mb-4">
+                    <h2 class="display-4 fw-bold text-primary">500+</h2>
+                    <p class="text-muted">Verified Providers</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-4">
+                    <h2 class="display-4 fw-bold text-success">10K+</h2>
+                    <p class="text-muted">Happy Customers</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-4">
+                    <h2 class="display-4 fw-bold text-info">50K+</h2>
+                    <p class="text-muted">Services Completed</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-4">
+                    <h2 class="display-4 fw-bold text-warning">4.8</h2>
+                    <p class="text-muted">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

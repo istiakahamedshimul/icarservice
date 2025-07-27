@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Dashboard - Vehicle Service Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="sidebar bg-primary text-white p-0">
+                <div class="p-3 border-bottom border-white border-opacity-25">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </h5>
+                </div>
+                <nav class="nav flex-column py-3">
+                    <a class="nav-link active" href="{% url 'accounts:dashboard' %}">
+                        <i class="fas fa-home me-2"></i>Overview
+                    </a>
+                    <a class="nav-link" href="{% url 'bookings:list' %}">
+                        <i class="fas fa-clipboard-list me-2"></i>My Bookings
+                    </a>
+                    <a class="nav-link" href="{% url 'bookings:create' %}">
+                        <i class="fas fa-plus me-2"></i>Book Service
+                    </a>
+                    <a class="nav-link" href="{% url 'accounts:profile' %}">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                    <a class="nav-link" href="{% url 'services:list' %}">
+                        <i class="fas fa-search me-2"></i>Find Services
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="main-content p-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="h3 mb-1">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                        <p class="text-muted mb-0">Here's what's happening with your vehicle services</p>
+                    </div>
+                    <a href="{% url 'bookings:create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Book New Service
+                    </a>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title mb-1">Total Bookings</h6>
+                                        <h3 class="mb-0">{{ recent_requests|length }}</h3>
+                                    </div>
+                                    <i class="fas fa-clipboard-list fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title mb-1">Vehicles</h6>
+                                        <h3 class="mb-0">{{ vehicles|length }}</h3>
+                                    </div>
+                                    <i class="fas fa-car fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title mb-1">Pending Reviews</h6>
+                                        <h3 class="mb-0">{{ pending_reviews|length }}</h3>
+                                    </div>
+                                    <i class="fas fa-star fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title mb-1">Active Services</h6>
+                                        <h3 class="mb-0">
+                                            {% with active_count=0 %}
+                                                {% for request in recent_requests %}
+                                                    {% if request.status == 'accepted' or request.status == 'in_progress' %}
+                                                        {% with active_count=active_count|add:1 %}{% endwith %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {{ active_count }}
+                                            {% endwith %}
+                                        </h3>
+                                    </div>
+                                    <i class="fas fa-cog fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Bookings -->
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Recent Service Requests</h5>
+                                <a href="{% url 'bookings:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                {% if recent_requests %}
+                                    <div class="list-group list-group-flush">
+                                        {% for request in recent_requests %}
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ request.service.name }}</h6>
+                                                    <p class="mb-1 text-muted">{{ request.vehicle.make }} {{ request.vehicle.model }}</p>
+                                                    <small class="text-muted">{{ request.created_at|date:"M d, Y H:i" }}</small>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge status-{{ request.status }}">
+                                                        {{ request.get_status_display }}
+                                                    </span>
+                                                    {% if request.final_cost %}
+                                                        <div class="text-muted small">${{ request.final_cost }}</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No service requests yet</p>
+                                        <a href="{% url 'bookings:create' %}" class="btn btn-primary">
+                                            Book Your First Service
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <!-- Quick Actions -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'bookings:create' %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-plus me-2"></i>Book Service
+                                    </a>
+                                    <a href="{% url 'services:nearby' %}" class="btn btn-outline-success">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Find Nearby Services
+                                    </a>
+                                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-info">
+                                        <i class="fas fa-user me-2"></i>Update Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Vehicles -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">My Vehicles</h5>
+                                <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+                            </div>
+                            <div class="card-body">
+                                {% if vehicles %}
+                                    {% for vehicle in vehicles %}
+                                        <div class="d-flex align-items-center mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                                            <i class="fas fa-car text-primary me-3"></i>
+                                            <div>
+                                                <h6 class="mb-0">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h6>
+                                                <small class="text-muted">{{ vehicle.license_plate }}</small>
+                                                {% if vehicle.is_primary %}
+                                                    <span class="badge bg-primary ms-2">Primary</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="text-center py-3">
+                                        <i class="fas fa-car fa-2x text-muted mb-2"></i>
+                                        <p class="text-muted mb-2">No vehicles added</p>
+                                        <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-primary">
+                                            Add Vehicle
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
